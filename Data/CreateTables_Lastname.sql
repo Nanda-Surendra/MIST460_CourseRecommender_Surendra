@@ -121,3 +121,13 @@ CREATE TABLE Section (
     CONSTRAINT CK_Section_Avg CHECK (SectionAverageRating >= 0 AND SectionAverageRating <= 5)
 );
 GO
+
+/*
+create table CoursePrerequisite (
+    CourseID        INT NOT NULL,
+    PrerequisiteID  INT NOT NULL,
+    constraint pkCoursePrerequisite primary key(CourseID, PrerequisiteID),
+    constraint fkCP_Course foreign key(CourseID) references Course(CourseID) on delete cascade,
+    constraint fkCP_Prerequisite foreign key(PrerequisiteID) references Course(CourseID) on delete cascade
+);
+*/

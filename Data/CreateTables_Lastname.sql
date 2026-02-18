@@ -1,6 +1,7 @@
 use MIST460_RDB_Lastname;
 
 -- Order matters (Why?)
+-- Feb 18 Updates
 IF OBJECT_ID('Section') IS NOT NULL DROP TABLE Section;
 IF OBJECT_ID('Instructor') IS NOT NULL DROP TABLE Instructor;
 IF OBJECT_ID('Course')         IS NOT NULL DROP TABLE Course;

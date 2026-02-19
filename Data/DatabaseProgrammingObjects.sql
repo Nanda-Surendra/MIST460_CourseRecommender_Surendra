@@ -1,0 +1,2 @@
+-- 1. What are the sections of a specific course (optional entry) offered this semester (spring 2026)?
+-- 2. What are the prerequisites for a specific course (optional entry)?

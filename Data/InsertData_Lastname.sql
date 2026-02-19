@@ -138,9 +138,6 @@ N'This cutting-edge course explores entrepreneurial opportunities in artificial 
 N'This course examines entrepreneurship as a vehicle for social change and sustainable development. Students explore business models that create both social value and financial returns, including social enterprises, B-Corps, and nonprofit innovation. Topics include impact measurement, sustainable business practices, stakeholder management, and funding strategies for social ventures. The course covers social innovation methodologies, systems thinking, and collaborative approaches to addressing societal challenges. Students develop social venture concepts, learning to balance mission and margin while creating meaningful impact. Real-world case studies demonstrate how entrepreneurship can address pressing social and environmental issues.',
 3.0, 40);
 
-go
-
--- Prerequisite rows
 
  go
 
@@ -183,7 +180,7 @@ VALUES
 -- Students: map all student AppUsers to Student
 INSERT INTO Student (StudentID, TotalCreditsCompleted, GraduationSemesterYear, OverallGPA, MajorGPA)
 values
-(1, 30, N'Fall 2027', 3.5, 3.6),
+(1, 105, N'Fall 2026', 3.5, 3.6),
 (2, 60, N'Spring 2027', 3.8, 3.9),
 (3, 15, N'Fall 2028', 3.2, 3.4),
 (4, 90, N'Spring 2026', 3.9, 4.0),
@@ -239,8 +236,16 @@ INSERT INTO Section
     SectionAverageRating
 )
 VALUES
-(1,  1, 20001, N'Spring', 2025, N'001', 45, 4.50),
-(2,  1, 20002, N'Spring', 2025, N'001', 30, 4.60),
+(1,  1, 10001, N'Fall', 2021, N'001', 45, 4.50),
+(2,  1, 10002, N'Spring', 2022, N'001', 30, 4.60),
+(3,  2, 10003, N'Fall', 2022, N'001', 25, 4.70),
+(4,  2, 10004, N'Spring', 2023, N'001', 20, 4.40),
+(5,  1, 10005, N'Fall', 2023, N'001', 35, 4.50),
+(6,  4, 10006, N'Spring', 2024, N'001', 18, 4.80),
+(7,  5, 10007, N'Fall', 2024, N'001', 15, 4.60),
+(8,  2, 10008, N'Spring', 2025, N'001', 22, 4.70),
+(1,  1, 20001, N'Spring', 2024, N'001', 45, 4.50),
+(2,  1, 20002, N'Spring', 2024, N'001', 30, 4.60),
 (3,  2, 20003, N'Spring', 2025, N'001', 25, 4.70),
 (4,  2, 20004, N'Spring', 2025, N'001', 20, 4.40),
 (5,  1, 20005, N'Spring', 2025, N'001', 35, 4.50),
@@ -263,13 +268,73 @@ VALUES
 (22, 2, 20022, N'Spring', 2026, N'001', 25,  0),
 (23, 2, 20023, N'Spring', 2026, N'001', 18,  0),
 (24, 5, 20024, N'Spring', 2026, N'001', 28,  0),
-(1,  1, 20001, N'Spring', 2026, N'001', 45, 0),
-(2,  1, 20002, N'Spring', 2026, N'001', 30, 0),
-(3,  2, 20003, N'Spring', 2026, N'001', 25, 0),
-(4,  2, 20004, N'Spring', 2026, N'001', 20, 0),
-(5,  1, 20005, N'Spring', 2026, N'001', 35, 0),
-(6,  4, 20006, N'Spring', 2026, N'001', 18, 0),
-(7,  5, 20007, N'Fall', 2026, N'001', 15, 0),
-(8,  2, 20008, N'Fall', 2026, N'001', 22, 0),
-(9,  3, 20009, N'Fall', 2026, N'001', 12, 0),
-(10, 3, 20010, N'Fall', 2026, N'001', 50,  0);
+(1,  1, 20025, N'Spring', 2026, N'001', 45, 0),
+(2,  1, 20026, N'Spring', 2026, N'001', 30, 0),
+(3,  2, 20027, N'Spring', 2026, N'001', 25, 0),
+(4,  2, 20028, N'Spring', 2026, N'001', 20, 0),
+(5,  1, 20029, N'Spring', 2026, N'001', 35, 0),
+(6,  4, 20030, N'Spring', 2026, N'001', 18, 0),
+(7,  5, 20031, N'Spring', 2026, N'001', 15, 0),
+(8,  2, 20032, N'Spring', 2026, N'001', 22, 0),
+(9,  3, 20033, N'Spring', 2026, N'001', 0, 0),
+(9,  3, 20034, N'Spring', 2026, N'002', 5, 0),
+(7,  5, 30001, N'Fall', 2026, N'001', 15, 0),
+(8,  2, 30002, N'Fall', 2026, N'001', 22, 0),
+(9,  3, 30003, N'Fall', 2026, N'001', 12, 0),
+(10, 3, 30004, N'Fall', 2026, N'001', 50,  0);
+
+GO
+
+-- select * from Section;
+
+-- Prerequisite rows
+
+INSERT INTO CoursePrerequisite (CourseID, PrerequisiteCourseID, MinGradeRequired) VALUES
+(2, 1, N'C'),
+ (3, 1, N'C'),
+ (4, 2, N'C'),
+ (4, 3, N'C'),
+ (6, 2, N'B'),
+ (6, 3, N'C'),
+ (7, 4, N'B'),
+ (7, 6, N'B'),
+ (9, 7, N'B'),
+ (9, 8, N'B');
+
+go
+
+-- Registration rows
+
+insert into Registration (StudentID, RegistrationDate, RegistrationSemester, RegistrationYear)
+values
+(1, '2021-08-01', N'Fall', 2021),
+(1, '2022-01-01', N'Spring', 2022),
+(1, '2022-08-01', N'Fall', 2022),
+(1, '2023-01-01', N'Spring', 2023),
+(1, '2023-08-01', N'Fall', 2023),
+(1, '2024-01-01', N'Spring', 2024),
+(1, '2024-08-01', N'Fall', 2024),
+(1, '2025-01-01', N'Spring', 2025),
+(1, '2025-08-01', N'Fall', 2025),
+(2, '2024-08-01', N'Fall', 2024),
+(2, '2025-01-01', N'Spring', 2025),
+(2, '2025-08-01', N'Fall', 2025);
+
+GO
+
+-- RegistrationSection rows
+
+insert into RegistrationSection (RegistrationID, SectionID, EnrollmentStatus, LetterGrade)
+VALUES
+(1, 1, N'Completed', N'A'),
+(2, 2, N'Completed', N'B'),
+(3, 3, N'Completed', N'C'),
+(4, 4, N'Completed', N'B'),
+(5, 5, N'Completed', N'A'),
+(6, 6, N'Completed', N'A'),
+(7, 7, N'Completed', N'B'),
+(8, 8, N'Completed', N'A'),
+(9, 9, N'Completed', N'A'),
+(10, 10, N'Completed', N'B'),
+(11, 11, N'Completed', N'C'),
+(12, 12, N'Completed', N'C');

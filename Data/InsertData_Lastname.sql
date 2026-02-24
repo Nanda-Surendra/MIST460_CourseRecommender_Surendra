@@ -1,4 +1,4 @@
-USE MIST460_RDB_Lastname; 
+USE MIST460_RDB_Lastname;
 
 go
 
@@ -287,9 +287,10 @@ GO
 
 -- select * from Section;
 
+-- select * from Course;
 -- Prerequisite rows
 
-INSERT INTO CoursePrerequisite (CourseID, PrerequisiteCourseID, MinGradeRequired) VALUES
+INSERT INTO CoursePrerequisite (CourseID, PrerequisiteID, MinGradeRequired) VALUES
 (2, 1, N'C'),
  (3, 1, N'C'),
  (4, 2, N'C'),
@@ -300,6 +301,8 @@ INSERT INTO CoursePrerequisite (CourseID, PrerequisiteCourseID, MinGradeRequired
  (7, 6, N'B'),
  (9, 7, N'B'),
  (9, 8, N'B');
+
+-- select * from CoursePrerequisite;
 
 go
 
@@ -334,7 +337,6 @@ VALUES
 (6, 6, N'Completed', N'A'),
 (7, 7, N'Completed', N'B'),
 (8, 8, N'Completed', N'A'),
-(9, 9, N'Completed', N'A'),
 (10, 10, N'Completed', N'B'),
 (11, 11, N'Completed', N'C'),
 (12, 12, N'Completed', N'C');

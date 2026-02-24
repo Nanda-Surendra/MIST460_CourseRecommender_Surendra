@@ -1,7 +1,6 @@
 use MIST460_RDB_Lastname; 
 
 -- Order matters (Why?)
--- Updated on Feb 18
 
 IF OBJECT_ID('RegistrationSection') IS NOT NULL DROP TABLE RegistrationSection;
 IF OBJECT_ID('Registration') IS NOT NULL DROP TABLE Registration;
@@ -49,7 +48,7 @@ CREATE TABLE Student (
     StudentID               INT 
         CONSTRAINT PK_Student PRIMARY KEY
         CONSTRAINT FK_Student_AppUser FOREIGN KEY (StudentID)
-        REFERENCES AppUser(AppUserID) ON DELETE CASCADE,
+        REFERENCES AppUser(AppUserID), -- ON DELETE CASCADE, -- Foreign key (Delete / Update -> Cascade, Restrict, Set Null)
     TotalCreditsCompleted   INT NOT NULL
         CONSTRAINT DF_Student_Credits DEFAULT (0)
         CONSTRAINT CK_Student_TCC CHECK (TotalCreditsCompleted >= 0),
@@ -65,7 +64,7 @@ GO
 CREATE TABLE Advisor (
     AdvisorID   INT CONSTRAINT PK_Advisor PRIMARY KEY,
     CONSTRAINT FK_Advisor_AppUser FOREIGN KEY (AdvisorID)
-        REFERENCES AppUser(AppUserID) ON DELETE CASCADE
+        REFERENCES AppUser(AppUserID)-- ON DELETE CASCADE
 );
 GO
 
@@ -73,7 +72,7 @@ CREATE TABLE Alum (
     AlumID              INT CONSTRAINT PK_Alum PRIMARY KEY,
     GraduationSemesterYear      NVARCHAR(25) NOT NULL,
     CONSTRAINT FK_Alum_AppUser FOREIGN KEY (AlumID)
-        REFERENCES AppUser(AppUserID) ON DELETE CASCADE
+        REFERENCES AppUser(AppUserID) --ON DELETE CASCADE
 );
 GO
 
@@ -133,12 +132,11 @@ create table CoursePrerequisite (
         CONSTRAINT PK_CoursePrerequisite PRIMARY KEY,
     CourseID int not null
         CONSTRAINT FK_CP_Course FOREIGN KEY (CourseID) REFERENCES Course(CourseID),-- ON DELETE CASCADE,
-    PrerequisiteCourseID int not null
-        CONSTRAINT FK_CP_PrerequisiteCourse FOREIGN KEY (PrerequisiteCourseID) REFERENCES Course(CourseID),-- ON DELETE CASCADE,
-    constraint UK_CoursePrerequisite UNIQUE(CourseID, PrerequisiteCourseID),
+    PrerequisiteID int not null
+        CONSTRAINT FK_CP_PrerequisiteCourse FOREIGN KEY (PrerequisiteID) REFERENCES Course(CourseID),-- ON DELETE CASCADE,
+    constraint UK_CoursePrerequisite UNIQUE(CourseID, PrerequisiteID),
     MinGradeRequired nchar(2) not null
-        constraint CK_CoursePrerequisite_Grade CHECK (MinGradeRequired IN (N'A', N'B', N'C', N'D')),
-    CONSTRAINT CK_CoursePrereq_NotSelf CHECK (CourseID <> PrerequisiteCourseID)
+        constraint CK_CoursePrerequisite_Grade CHECK (MinGradeRequired IN (N'A', N'B', N'C', N'D'))  
 );
 
 GO
@@ -147,13 +145,12 @@ create table Registration (
     RegistrationID int identity(1,1) not null
         constraint PK_Registration primary key,
     StudentID int not null
-        constraint FK_Registration_Student foreign key(StudentID) references Student(StudentID) on delete cascade,
+        constraint FK_Registration_Student foreign key(StudentID) references Student(StudentID), -- on delete cascade,
     RegistrationDate datetime not null default getdate(),
     RegistrationSemester nvarchar(12) not null
         constraint CK_Registration_Sem CHECK (RegistrationSemester IN (N'Spring',N'Summer',N'Fall',N'Winter')),
     RegistrationYear int not null
-        constraint DF_Registration_Year DEFAULT (YEAR(getdate())),
-    constraint UK_Student_Registration UNIQUE(StudentID, RegistrationSemester, RegistrationYear)
+        constraint DF_Registration_Year DEFAULT (YEAR(getdate()))
 );
 
 GO
@@ -162,13 +159,14 @@ create table RegistrationSection (
     RegistrationSectionID int identity(1,1) not null
         constraint PK_RegistrationSection primary key,
     RegistrationID int not null
-        constraint FK_RS_Registration foreign key(RegistrationID) references Registration(RegistrationID) on delete cascade,
+        constraint FK_RS_Registration foreign key(RegistrationID) references Registration(RegistrationID), --on delete cascade,
     SectionID int not null
         constraint FK_RS_Section foreign key(SectionID) references Section(SectionID),
     constraint UK_RegistrationSection UNIQUE(RegistrationID, SectionID),
     EnrollmentStatus NVARCHAR(20) not null
         constraint CK_Enrollment_Status CHECK (EnrollmentStatus IN (N'Enrolled', N'Waitlisted', N'Dropped', N'Completed')),
     LetterGrade nchar(2) null
-        constraint CK_RegistrationSection_Grade CHECK (LetterGrade IN (N'A', N'B', N'C', N'D', N'F', N'W', null))
+        constraint CK_RegistrationSection_Grade CHECK (LetterGrade IN (N'A', N'B', N'C', N'D', N'F', N'W', null)),
+    LastUpdate datetime not null default getdate()
 );
 

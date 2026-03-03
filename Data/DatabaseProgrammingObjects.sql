@@ -13,8 +13,8 @@ GO
 
 create or alter procedure GetCourseSectionsForSpecifiedCourse
 (
-    @SubjectCode nvarchar(10) = null,
-    @CourseNumber nvarchar(10) = null
+    @SubjectCode nvarchar(10) = null, -- parameters are for input from the user
+    @CourseNumber nvarchar(10) = null -- optional parameters, so input from user is not required
 )
 AS
 begin
@@ -32,7 +32,7 @@ begin
     from Section S  
         inner join Course C on S.CourseID = C.CourseID
         inner join Instructor I on S.InstructorID = I.InstructorID
-    where S.SectionSemester = dbo.GetSemesterFromMonth()
+    where S.SectionSemester = dbo.fnGetSemesterFromMonth()
     and S.SectionYear = Year(GetDate())
     and C.SubjectCode = ISNULL(@SubjectCode, C.SubjectCode)
     and C.CourseNumber = ISNULL(@CourseNumber, C.CourseNumber)
@@ -47,8 +47,11 @@ execute GetCourseSectionsForSpecifiedCourse
 
 go
 
+--drop function dbo.GetSemesterFromMonth
+
+go
 -- scalar function to get a semester base on month number
-create or alter function dbo.GetSemesterFromMonth()
+create or alter function dbo.fnGetSemesterFromMonth()
 returns nvarchar(20)
 AS
 BEGIN

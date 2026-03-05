@@ -175,6 +175,29 @@ END;
 -- checks if the student has met the prerequisites for a course.
 go
 
+create or alter function fnGradePointsFromLetterGrade
+(
+	@LetterGrade nchar(2)
+)
+returns int
+as
+begin
+	declare @GradePoints int;
+	
+	set @GradePoints = case @LetterGrade
+		when 'A' then 4
+		when 'B' then 3
+		when 'C' then 2
+		when 'D' then 1
+		else 0
+	end;
+
+	return @GradePoints;
+end;
+
+
+go
+
 select * from fnGetCoursePrerequisites('MIST', '460') as Prerequisites
 join fnGetStudentCourseHistory(1) as History
     on Prerequisites.SubjectCode = History.SubjectCode

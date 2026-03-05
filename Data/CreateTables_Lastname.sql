@@ -1,4 +1,4 @@
-use MIST460_RDB_Lastname; 
+use [mist460-spring2026-prep-database]; 
 
 -- Order matters (Why?)
 

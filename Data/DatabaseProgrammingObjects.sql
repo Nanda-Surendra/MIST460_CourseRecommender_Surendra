@@ -179,3 +179,30 @@ select * from fnGetCoursePrerequisites('MIST', '460') as Prerequisites
 join fnGetStudentCourseHistory(1) as History
     on Prerequisites.SubjectCode = History.SubjectCode
     and Prerequisites.CourseNumber = History.CourseNumber
+
+
+-- Understand concepts: SP, Functions (Scalar, Table-valued) -> modularity, reusability, encapsulation.
+-- Use to solve a problem
+
+-- Trigger -> automatic execution in response to certain events (e.g., insert, update, delete) on a table.
+-- Enroll student in a section (insert into RegistrationSection)
+-- create procedure procEnrollStudentInSection(@StudentID int, @SectionID int)
+GO
+
+create TRIGGER trgDecreaseSectionSeats
+ON RegistrationSection
+AFTER INSERT -- triggering event
+AS
+BEGIN -- trigger action -- logic to execute when the trigger is fired
+    -- Decrease the RemainingOpenings in the Section table by 1 for the corresponding SectionID
+    UPDATE S
+    SET RemainingOpenings = RemainingOpenings - 1
+    FROM Section S
+    JOIN inserted I ON S.SectionID = I.SectionID;
+END;
+
+-- By Noon Monday
+-- Group project
+-- 
+
+go

@@ -1,4 +1,4 @@
-USE MIST460_RDB_Lastname;
+--USE MIST460_RDB_Lastname;
 
 go
 

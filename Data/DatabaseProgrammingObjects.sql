@@ -310,8 +310,12 @@ BEGIN
             >= dbo.fnGradePointsFromLetterGrade(Prerequisites.MinGradeRequired);
 */
 
-    SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, Prerequisites.MinGradeRequired -- History.Grade
+    SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, 
+        Prerequisites.MinGradeRequired, ISNULL(History.Grade, 'NA') as StudentGrade
     FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
+        left join fnGetStudentCourseHistory(@StudentID) AS History
+        ON Prerequisites.SubjectCode = History.SubjectCode
+        AND Prerequisites.CourseNumber = History.CourseNumber
     WHERE NOT EXISTS (
         SELECT 1
         FROM fnGetStudentCourseHistory(@StudentID) AS History
@@ -325,6 +329,6 @@ BEGIN
 END;
 GO
 
---EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 3, @SubjectCode = 'MIST', @CourseNumber = '460';
+--EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 2, @SubjectCode = 'MIST', @CourseNumber = '460';
 
 go

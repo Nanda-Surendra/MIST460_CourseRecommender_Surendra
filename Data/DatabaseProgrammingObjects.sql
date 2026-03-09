@@ -1,20 +1,3 @@
---use [mist460-spring2026-prep-database];
-
-/*
-
--- Understand concepts: SP, Functions (Scalar, Table-valued) -> modularity, reusability, encapsulation.
--- Use to solve a problem
-
--- Trigger -> automatic execution in response to certain events (e.g., insert, update, delete) on a table.
--- Enroll student in a section (insert into RegistrationSection)
--- create procedure procEnrollStudentInSection(@StudentID int, @SectionID int)
-
--- By Noon Monday
--- Group project
-
-
-*/
-
 go
 
 IF OBJECT_ID('procGetCourseSectionsForSpecifiedCourse') is NOT NULL
@@ -211,7 +194,7 @@ BEGIN
 
     return;
 END;
--- select * from fnGetStudentCourseHistory(1);
+-- select * from fnGetStudentCourseHistory(3);
 
 -- Encapsulate logic inside a stored procedure that 
 -- checks if the student has met the prerequisites for a course.
@@ -270,13 +253,33 @@ AFTER INSERT -- triggering event
 AS
 BEGIN -- trigger action -- logic to execute when the trigger is fired
     -- Decrease the RemainingOpenings in the Section table by 1 for the corresponding SectionID
-    UPDATE S
+    UPDATE Section
     SET RemainingOpenings = RemainingOpenings - 1
     FROM Section S
     JOIN inserted I ON S.SectionID = I.SectionID;
 END;
 
 go
+
+create procedure procEnrollStudentInSection
+(
+    @RegistrationID int,
+    @SectionID int
+)
+as
+begin
+    insert into RegistrationSection (RegistrationID, SectionID)
+    values (@RegistrationID, @SectionID); -- this should trigger the decrease in RemainingOpenings for SectionID = 1
+end;
+-- EXEC procEnrollStudentInSection @RegistrationID = 1, @SectionID = 1;
+
+select *
+from Registration;
+
+-- 1. Create a stored procedure to register a student (procRegisterStudent)
+-- 2. Insert Registration record for student 3 spring 2026
+-- 3. Enroll student in a section of MIST 460 (procEnrollStudentInSection)
+
 
 /*
 
@@ -286,5 +289,42 @@ join fnGetStudentCourseHistory(1) as History
     and Prerequisites.CourseNumber = History.CourseNumber
 
 */
+
+go
+
+CREATE OR ALTER PROCEDURE procHasStudentMetPrerequisitesForCourse
+    @StudentID    INT,
+    @SubjectCode  VARCHAR(30),
+    @CourseNumber VARCHAR(30)
+AS
+BEGIN
+
+/*
+    SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, Prerequisites.MinGradeRequired,
+    History.Grade
+    FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
+        left join fnGetStudentCourseHistory(@StudentID) AS History
+        ON Prerequisites.SubjectCode = History.SubjectCode
+        AND Prerequisites.CourseNumber = History.CourseNumber
+        AND dbo.fnGradePointsFromLetterGrade(History.Grade) 
+            >= dbo.fnGradePointsFromLetterGrade(Prerequisites.MinGradeRequired);
+*/
+
+    SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, Prerequisites.MinGradeRequired -- History.Grade
+    FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM fnGetStudentCourseHistory(@StudentID) AS History
+        WHERE Prerequisites.SubjectCode = History.SubjectCode
+        AND Prerequisites.CourseNumber = History.CourseNumber
+        AND dbo.fnGradePointsFromLetterGrade(History.Grade) 
+            >= dbo.fnGradePointsFromLetterGrade(Prerequisites.MinGradeRequired)
+    );
+
+
+END;
+GO
+
+--EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 3, @SubjectCode = 'MIST', @CourseNumber = '460';
 
 go

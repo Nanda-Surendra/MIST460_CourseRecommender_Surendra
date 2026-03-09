@@ -50,6 +50,29 @@ GO
 -- Conditions: Offered in Spring 2026 (Section)
 -- Output: SectionID, InstructorName, SeatsAvailable (Section + Instructor)
 
+go
+-- scalar function to get a semester base on month number
+create or alter function dbo.fnGetSemesterFromMonth()
+returns nvarchar(20)
+AS
+BEGIN
+    declare @MonthNumber int = month(getdate());
+    declare @Semester nvarchar(20);
+
+    if @MonthNumber in (1, 2, 3, 4, 5)
+        set @Semester = N'Spring';
+    else if @MonthNumber in (6, 7)
+        set @Semester = N'Summer';
+    else
+        set @Semester = N'Fall';
+
+    return @Semester;
+END;
+
+-- select dbo.GetSemesterFromMonth() as CurrentSemester;
+
+go
+
 create or alter procedure procGetCourseSectionsForSpecifiedCourse
 (
     @SubjectCode nvarchar(10) = null, -- parameters are for input from the user
@@ -88,26 +111,6 @@ go
 
 --drop function dbo.GetSemesterFromMonth
 
-go
--- scalar function to get a semester base on month number
-create or alter function dbo.fnGetSemesterFromMonth()
-returns nvarchar(20)
-AS
-BEGIN
-    declare @MonthNumber int = month(getdate());
-    declare @Semester nvarchar(20);
-
-    if @MonthNumber in (1, 2, 3, 4, 5)
-        set @Semester = N'Spring';
-    else if @MonthNumber in (6, 7)
-        set @Semester = N'Summer';
-    else
-        set @Semester = N'Fall';
-
-    return @Semester;
-END;
-
--- select dbo.GetSemesterFromMonth() as CurrentSemester;
 
 
 -- 2. What are the prerequisites for a specific course (optional entry)?
@@ -261,7 +264,7 @@ end;
 
 go
 
-create TRIGGER trgDecreaseSectionSeats
+create or alter TRIGGER trgDecreaseSectionSeats
 ON RegistrationSection
 AFTER INSERT -- triggering event
 AS

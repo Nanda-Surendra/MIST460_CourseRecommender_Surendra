@@ -1,4 +1,43 @@
-use MIST460_RDB_Lastname;
+--use [mist460-spring2026-prep-database];
+
+/*
+
+-- Understand concepts: SP, Functions (Scalar, Table-valued) -> modularity, reusability, encapsulation.
+-- Use to solve a problem
+
+-- Trigger -> automatic execution in response to certain events (e.g., insert, update, delete) on a table.
+-- Enroll student in a section (insert into RegistrationSection)
+-- create procedure procEnrollStudentInSection(@StudentID int, @SectionID int)
+
+-- By Noon Monday
+-- Group project
+
+
+*/
+
+go
+
+IF OBJECT_ID('procGetCourseSectionsForSpecifiedCourse') is NOT NULL
+    DROP PROCEDURE procGetCourseSectionsForSpecifiedCourse;
+
+IF OBJECT_ID('fnGetSemesterFromMonth') is NOT NULL
+    DROP FUNCTION fnGetSemesterFromMonth;
+
+IF OBJECT_ID('procGetCoursePrerequisites') is NOT NULL
+    DROP PROCEDURE procGetCoursePrerequisites;
+
+IF OBJECT_ID('fnGetCoursePrerequisites') is NOT NULL
+    DROP FUNCTION fnGetCoursePrerequisites;
+
+IF OBJECT_ID('fnGetStudentCourseHistory') is NOT NULL
+    DROP FUNCTION fnGetStudentCourseHistory;
+
+IF OBJECT_ID('fnGradePointsFromLetterGrade') is NOT NULL
+    DROP FUNCTION fnGradePointsFromLetterGrade;
+
+IF OBJECT_ID('trgDecreaseSectionSeats') is NOT NULL
+    DROP TRIGGER trgDecreaseSectionSeats;
+
 
 -- Need days / times for sections, Location
 
@@ -11,7 +50,7 @@ GO
 -- Conditions: Offered in Spring 2026 (Section)
 -- Output: SectionID, InstructorName, SeatsAvailable (Section + Instructor)
 
-create or alter procedure GetCourseSectionsForSpecifiedCourse
+create or alter procedure procGetCourseSectionsForSpecifiedCourse
 (
     @SubjectCode nvarchar(10) = null, -- parameters are for input from the user
     @CourseNumber nvarchar(10) = null -- optional parameters, so input from user is not required
@@ -40,7 +79,7 @@ begin
 end;
 
 /*
-execute GetCourseSectionsForSpecifiedCourse
+execute procGetCourseSectionsForSpecifiedCourse
     @SubjectCode = 'MIST',
     @CourseNumber = '460';
 */
@@ -75,7 +114,7 @@ END;
 
 GO
 
-CREATE OR ALTER PROCEDURE GetCoursePrerequisites
+CREATE OR ALTER PROCEDURE procGetCoursePrerequisites
 (
     @SubjectCode  VARCHAR(30) = NULL,
     @CourseNumber VARCHAR(30)
@@ -98,7 +137,7 @@ BEGIN
         AND MainCourse.CourseNumber = @CourseNumber;
 END;
 
---EXEC GetCoursePrerequisites @SubjectCode = 'MIST', @CourseNumber = '460';
+--EXEC procGetCoursePrerequisites @SubjectCode = 'MIST', @CourseNumber = '460';
 
 -- Use to a table-valued function instead of a stored procedure if you want to use it in a join or subquery.
 
@@ -195,22 +234,32 @@ begin
 	return @GradePoints;
 end;
 
+GO
+
+create or alter function fnGradePointsFromLetterGrade
+(
+	@LetterGrade nchar(2)
+)
+returns int
+as
+begin
+	declare @GradePoints int;
+	
+	set @GradePoints = case @LetterGrade
+		when 'A' then 4
+		when 'B' then 3
+		when 'C' then 2
+		when 'D' then 1
+		else 0
+	end;
+
+	return @GradePoints;
+end;
+
+-- select dbo.fnGradePointsFromLetterGrade('A') as GradePoints;
+-- select dbo.fnGradePointsFromLetterGrade(null) as GradePoints;
 
 go
-
-select * from fnGetCoursePrerequisites('MIST', '460') as Prerequisites
-join fnGetStudentCourseHistory(1) as History
-    on Prerequisites.SubjectCode = History.SubjectCode
-    and Prerequisites.CourseNumber = History.CourseNumber
-
-
--- Understand concepts: SP, Functions (Scalar, Table-valued) -> modularity, reusability, encapsulation.
--- Use to solve a problem
-
--- Trigger -> automatic execution in response to certain events (e.g., insert, update, delete) on a table.
--- Enroll student in a section (insert into RegistrationSection)
--- create procedure procEnrollStudentInSection(@StudentID int, @SectionID int)
-GO
 
 create TRIGGER trgDecreaseSectionSeats
 ON RegistrationSection
@@ -224,8 +273,15 @@ BEGIN -- trigger action -- logic to execute when the trigger is fired
     JOIN inserted I ON S.SectionID = I.SectionID;
 END;
 
--- By Noon Monday
--- Group project
--- 
+go
+
+/*
+
+select * from fnGetCoursePrerequisites('MIST', '460') as Prerequisites
+join fnGetStudentCourseHistory(1) as History
+    on Prerequisites.SubjectCode = History.SubjectCode
+    and Prerequisites.CourseNumber = History.CourseNumber
+
+*/
 
 go

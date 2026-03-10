@@ -165,7 +165,7 @@ create table RegistrationSection (
     constraint UK_RegistrationSection UNIQUE(RegistrationID, SectionID),
     EnrollmentStatus NVARCHAR(20) not null
         constraint CK_Enrollment_Status CHECK (EnrollmentStatus IN (N'Enrolled', N'Waitlisted', N'Dropped', N'Completed')),
-    LetterGrade nchar(2) null
+    LetterGrade nchar(2) null DEFAULT null
         constraint CK_RegistrationSection_Grade CHECK (LetterGrade IN (N'A', N'B', N'C', N'D', N'F', N'W', null)),
     LastUpdate datetime not null default getdate()
 );

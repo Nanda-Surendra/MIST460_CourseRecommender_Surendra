@@ -311,7 +311,8 @@ BEGIN
 */
 
     SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, 
-        Prerequisites.MinGradeRequired, ISNULL(History.Grade, 'NA') as StudentGrade
+        Prerequisites.MinGradeRequired, 
+        IsNull(CAST(History.Grade as NVARCHAR(10)), 'Not taken') as 'Student Grade'
     FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
         left join fnGetStudentCourseHistory(@StudentID) AS History
         ON Prerequisites.SubjectCode = History.SubjectCode

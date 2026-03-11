@@ -21,6 +21,12 @@ IF OBJECT_ID('fnGradePointsFromLetterGrade') is NOT NULL
 IF OBJECT_ID('trgDecreaseSectionSeats') is NOT NULL
     DROP TRIGGER trgDecreaseSectionSeats;
 
+IF OBJECT_ID('procValidateUser') is NOT NULL
+    DROP PROCEDURE procValidateUser;
+
+IF OBJECT_ID('procHasStudentMetPrerequisitesForCourse') is NOT NULL
+    DROP PROCEDURE procHasStudentMetPrerequisitesForCourse;
+
 
 -- Need days / times for sections, Location
 
@@ -311,8 +317,8 @@ BEGIN
 */
 
     SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, 
-        Prerequisites.MinGradeRequired, 
-        IsNull(CAST(History.Grade as NVARCHAR(10)), 'Not taken') as 'Student Grade'
+        Prerequisites.MinGradeRequired as 'MinimumGradeRequired', 
+        IsNull(CAST(History.Grade as NVARCHAR(10)), 'Not taken') as 'StudentGrade'
     FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
         left join fnGetStudentCourseHistory(@StudentID) AS History
         ON Prerequisites.SubjectCode = History.SubjectCode
@@ -333,3 +339,22 @@ GO
 --EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 2, @SubjectCode = 'MIST', @CourseNumber = '460';
 
 go
+
+create or alter procedure procValidateUser
+(@username nvarchar(320), @password nvarchar(100))
+as
+begin
+	select AppUserID, Firstname + ' ' + LastName as FullName
+	from AppUser
+	where Email = @username and
+		PasswordHash = CONVERT(VARBINARY(64), @password, 1)
+end;
+
+/*
+execute procValidateUser
+@username = 'mjordan@wvu.edu', 
+@password = '0x01';
+
+select AppUserID, Firstname, LastName, Email, PasswordHash
+from AppUser
+*/

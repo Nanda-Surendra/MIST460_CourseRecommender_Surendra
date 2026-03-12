@@ -13,6 +13,9 @@ def get_db_connection():
     password = os.getenv('DB_PASSWORD')
     driver = os.getenv('DB_DRIVER')
 
-    connection_string = f"DRIVER={driver};SERVER={server}; DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=yes;Connection Timeout=30;"
-                
+    #connection_string = f"DRIVER={driver};SERVER={server}; DATABASE={database};UID={user};PWD={password};Encrypt=yes;TrustServerCertificate=yes;Connection Timeout=30;"
+
+    connection_string = f"DRIVER={driver};SERVER={server}; DATABASE={database};UID={user};PWD={password};"
+    connection_string += f"Encrypt=yes;TrustServerCertificate=yes;Connection Timeout=30;"
+
     return pyodbc.connect(connection_string)

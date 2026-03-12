@@ -316,13 +316,17 @@ BEGIN
             >= dbo.fnGradePointsFromLetterGrade(Prerequisites.MinGradeRequired);
 */
 
+-- Subqueries - IN, NOT IN, EXISTS, NOT EXISTS
+-- IN non-correlated subquery - returns all the prerequisites for the course
+-- EXIST correlated subquery - checks if there is a record in the student's course history that matches the prerequisite and has a grade that meets the minimum requirement
+    
     SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, 
         Prerequisites.MinGradeRequired as 'MinimumGradeRequired', 
-        IsNull(CAST(History.Grade as NVARCHAR(10)), 'Not taken') as 'StudentGrade'
+        IsNull(CAST(History.Grade AS NVARCHAR(20)), 'Not Completed') as 'StudentGrade'
     FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
-        left join fnGetStudentCourseHistory(@StudentID) AS History
-        ON Prerequisites.SubjectCode = History.SubjectCode
-        AND Prerequisites.CourseNumber = History.CourseNumber
+        LEFT JOIN fnGetStudentCourseHistory(@StudentID) AS History
+            ON Prerequisites.SubjectCode = History.SubjectCode
+            AND Prerequisites.CourseNumber = History.CourseNumber
     WHERE NOT EXISTS (
         SELECT 1
         FROM fnGetStudentCourseHistory(@StudentID) AS History
@@ -357,4 +361,25 @@ execute procValidateUser
 
 select AppUserID, Firstname, LastName, Email, PasswordHash
 from AppUser
+*/
+
+/*
+GO
+
+DROP LOGIN APILogin;
+
+GO
+
+CREATE LOGIN APILogin
+WITH PASSWORD = 'MI$T460Instructor';
+
+GO
+
+CREATE USER APIUser
+FOR LOGIN APILogin;
+
+GO
+
+GRANT EXECUTE TO APIUser;
+GRANT SELECT TO APIUser;
 */

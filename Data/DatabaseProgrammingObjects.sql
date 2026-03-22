@@ -109,7 +109,7 @@ GO
 CREATE OR ALTER PROCEDURE procGetCoursePrerequisites
 (
     @SubjectCode  VARCHAR(30) = NULL,
-    @CourseNumber VARCHAR(30)
+    @CourseNumber VARCHAR(30) = NULL
 )
 AS
 BEGIN
@@ -119,14 +119,16 @@ BEGIN
         RETURN;
     END;
     SELECT
-        prereq.Title, prereq.SubjectCode, prereq.CourseNumber, CP.MinGradeRequired
+        MainCourse.Title 'MainCourseTitle', MainCourse.SubjectCode 'MainCourseSubjectCode', MainCourse.CourseNumber 'MainCourseNumber',
+        prereq.Title 'PrerequisiteTitle', prereq.SubjectCode 'PrerequisiteSubjectCode', prereq.CourseNumber 'PrerequisiteCourseNumber', 
+        CP.MinGradeRequired 'MinGradeRequired'
             FROM CoursePrerequisite CP
         JOIN Course MainCourse ON CP.CourseID = MainCourse.CourseID
         JOIN Course prereq ON CP.PrerequisiteID = prereq.CourseID
     WHERE
         --(@SubjectCode IS NULL OR c.SubjectCode = @SubjectCode)
         MainCourse.SubjectCode = IsNull(@SubjectCode, MainCourse.SubjectCode)
-        AND MainCourse.CourseNumber = @CourseNumber;
+        AND MainCourse.CourseNumber = IsNull(@CourseNumber, MainCourse.CourseNumber);
 END;
 
 --EXEC procGetCoursePrerequisites @SubjectCode = 'MIST', @CourseNumber = '460';

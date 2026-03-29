@@ -1,4 +1,6 @@
 import streamlit as st
+from get_course_sections_for_specified_course_ui import get_course_sections_for_specified_course_ui
+from get_course_prerequisites_ui import get_course_prerequisites_ui
 
 with st.sidebar:
     st.title("Course Recommender System")
@@ -12,7 +14,7 @@ with st.sidebar:
         ]
     )
 
-    # if api_end_point == "Get Course Sections for Specified Course":
-    #     get_course_sections_for_specified_course_ui()
-    # elif api_end_point == "Get Course Prerequisites":
-    #     get_course_prerequisites_ui()
+if api_end_point == "Get Course Sections for Specified Course":
+    get_course_sections_for_specified_course_ui()
+elif api_end_point == "Get Course Prerequisites":
+    get_course_prerequisites_ui()

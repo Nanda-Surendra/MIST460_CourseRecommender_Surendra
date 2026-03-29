@@ -365,23 +365,3 @@ select AppUserID, Firstname, LastName, Email, PasswordHash
 from AppUser
 */
 
-/*
-GO
-
-DROP LOGIN APILogin;
-
-GO
-
-CREATE LOGIN APILogin
-WITH PASSWORD = 'MI$T460Instructor';
-
-GO
-
-CREATE USER APIUser
-FOR LOGIN APILogin;
-
-GO
-
-GRANT EXECUTE TO APIUser;
-GRANT SELECT TO APIUser;
-*/

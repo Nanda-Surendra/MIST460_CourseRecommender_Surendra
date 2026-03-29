@@ -269,7 +269,7 @@ END;
 
 go
 
-create procedure procEnrollStudentInSection
+create or alter procedure procEnrollStudentInSection
 (
     @RegistrationID int,
     @SectionID int

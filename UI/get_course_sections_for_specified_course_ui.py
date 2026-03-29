@@ -19,5 +19,6 @@ def get_course_sections_for_specified_course_ui():
         
         if df is not None and not df.empty:
             st.dataframe(df, use_container_width=True, hide_index=True)
+                         #column_config={col: st.column_config.Column(width="small") for col in df.columns})
         else:
             st.info("No course sections found for the specified course.")

@@ -343,6 +343,8 @@ END;
 GO
 
 --EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 2, @SubjectCode = 'MIST', @CourseNumber = '460';
+--EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 1, @SubjectCode = 'MIST', @CourseNumber = '460';
+--EXEC procHasStudentMetPrerequisitesForCourse @StudentID = 3, @SubjectCode = 'MIST', @CourseNumber = '460';
 
 go
 
@@ -350,7 +352,7 @@ create or alter procedure procValidateUser
 (@username nvarchar(320), @password nvarchar(100))
 as
 begin
-	select AppUserID, Firstname + ' ' + LastName as FullName
+	select AppUserID, Firstname + ' ' + Lastname as Fullname
 	from AppUser
 	where Email = @username and
 		PasswordHash = CONVERT(VARBINARY(64), @password, 1)

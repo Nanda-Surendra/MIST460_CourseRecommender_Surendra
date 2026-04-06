@@ -307,17 +307,6 @@ CREATE OR ALTER PROCEDURE procHasStudentMetPrerequisitesForCourse
 AS
 BEGIN
 
-/*
-    SELECT Prerequisites.SubjectCode, Prerequisites.CourseNumber, Prerequisites.MinGradeRequired,
-    History.Grade
-    FROM fnGetCoursePrerequisites(@SubjectCode, @CourseNumber) AS Prerequisites
-        left join fnGetStudentCourseHistory(@StudentID) AS History
-        ON Prerequisites.SubjectCode = History.SubjectCode
-        AND Prerequisites.CourseNumber = History.CourseNumber
-        AND dbo.fnGradePointsFromLetterGrade(History.Grade) 
-            >= dbo.fnGradePointsFromLetterGrade(Prerequisites.MinGradeRequired);
-*/
-
 -- Subqueries - IN, NOT IN, EXISTS, NOT EXISTS
 -- IN non-correlated subquery - returns all the prerequisites for the course
 -- EXIST correlated subquery - checks if there is a record in the student's course history that matches the prerequisite and has a grade that meets the minimum requirement

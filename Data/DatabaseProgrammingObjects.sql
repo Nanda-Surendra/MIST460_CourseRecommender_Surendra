@@ -356,3 +356,5 @@ select AppUserID, Firstname, LastName, Email, PasswordHash
 from AppUser
 */
 
+--- Logic for enrolling a student in a course section (Input -> Creating / Inserting; Updating -> Delete / Insert)
+-- Write down the steps you would take to enroll a student in a course section, including any checks you would perform

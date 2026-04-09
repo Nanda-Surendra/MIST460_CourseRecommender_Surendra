@@ -5,8 +5,9 @@ def get_course_sections_for_specified_course(
     course_number: str = None,
 ):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("{CALL procGetCourseSectionsForSpecifiedCourse(?, ?)}", (subject_code, course_number))
+    cursor = conn.cursor(as_dict=True)
+    #cursor.execute("{CALL procGetCourseSectionsForSpecifiedCourse(?, ?)}", (subject_code, course_number))
+    cursor.callproc("procGetCourseSectionsForSpecifiedCourse", (subject_code, course_number))
     rows = cursor.fetchall()
     conn.close()
 
@@ -14,13 +15,13 @@ def get_course_sections_for_specified_course(
 
     results = [
         {
-            "SubjectCode": row.SubjectCode,
-            "CourseNumber": row.CourseNumber,
-            "SectionNumber": row.SectionNumber,
-            "SectionSemester": row.SectionSemester,
-            "SectionYear": row.SectionYear,
-            "RemainingOpenings": row.RemainingOpenings,
-            "InstructorName": row.InstructorName
+            "SubjectCode": row["SubjectCode"],
+            "CourseNumber": row["CourseNumber"],
+            "SectionNumber": row["SectionNumber"],
+            "SectionSemester": row["SectionSemester"],
+            "SectionYear": row["SectionYear"],
+            "RemainingOpenings": row["RemainingOpenings"],
+            "InstructorName": row["InstructorName"]
         }
         for row in rows
     ]

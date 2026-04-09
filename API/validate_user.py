@@ -5,8 +5,9 @@ def validate_user(
     password: str,
 ):
     conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("{CALL procValidateUser(?, ?)}", (username, password))
+    cursor = conn.cursor(as_dict=True)
+    #cursor.execute("{CALL procValidateUser(?, ?)}", (username, password))
+    cursor.callproc("procValidateUser", (username, password))
     rows = cursor.fetchall()
     conn.close()
 
@@ -14,8 +15,8 @@ def validate_user(
 
     results = [
         {
-            "AppUserID": row.AppUserID,
-            "Fullname": row.Fullname,
+            "AppUserID": row["AppUserID"],
+            "Fullname": row["Fullname"],
         }
         for row in rows
     ]

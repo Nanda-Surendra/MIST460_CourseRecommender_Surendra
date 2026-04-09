@@ -1,1 +1,1 @@
-gunicorn -w 4 -k uvicorn.workers.UvicornWorker --chdir /home/site/wwwroot/API course_recommender_apis:app
+gunicorn -w 4 -k uvicorn.workers.UvicornWorker course_recommender_apis:app

@@ -45,7 +45,6 @@ jobs:
           name: python-app
           path: |
               API/
-              requirements.txt
               !.venv/
 
       # 🚫 Opting Out of Oryx Build

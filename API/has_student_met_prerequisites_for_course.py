@@ -1,4 +1,5 @@
 from get_db_connection import get_db_connection
+import pymssql
 
 def has_student_met_prerequisites_for_course(
     student_id: int,
@@ -9,14 +10,13 @@ def has_student_met_prerequisites_for_course(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procHasStudentMetPrerequisitesForCourse(?, ?, ?)}", (student_id, subject_code, course_number))
     cursor.callproc("procHasStudentMetPrerequisitesForCourse", (student_id, subject_code, course_number))
-    rows = cursor.fetchall()
-    cursor.nextset()  # Move to the next result set to get the output parameter
+    #cursor.nextset()
 
     try:
         rows = cursor.fetchall()
-    except Exception:
+    except pymssql.OperationalError:
         rows = []
-
+    
     conn.close()
 
     #Convert rows to list of dictionaries

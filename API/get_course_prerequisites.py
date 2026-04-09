@@ -1,4 +1,5 @@
 from get_db_connection import get_db_connection
+import pymssql
 
 def get_course_prerequisites(
     subject_code: str = None,
@@ -8,7 +9,13 @@ def get_course_prerequisites(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procGetCoursePrerequisites(?, ?)}", (subject_code, course_number))
     cursor.callproc("procGetCoursePrerequisites", (subject_code, course_number))
-    rows = cursor.fetchall()
+    #cursor.nextset()
+
+    try:
+        rows = cursor.fetchall()
+    except pymssql.OperationalError:
+        rows = []
+
     conn.close()
 
     #Convert rows to list of dictionaries

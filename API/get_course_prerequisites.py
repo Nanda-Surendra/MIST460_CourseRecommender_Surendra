@@ -13,7 +13,7 @@ def get_course_prerequisites(
 
     try:
         rows = cursor.fetchall()
-    except pymssql.OperationalError:
+    except pymssql.Error:
         rows = []
 
     conn.close()

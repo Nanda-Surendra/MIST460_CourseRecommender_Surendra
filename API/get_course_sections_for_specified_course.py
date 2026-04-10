@@ -1,3 +1,5 @@
+import pymssql
+
 from get_db_connection import get_db_connection
 
 def get_course_sections_for_specified_course(
@@ -8,7 +10,12 @@ def get_course_sections_for_specified_course(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procGetCourseSectionsForSpecifiedCourse(?, ?)}", (subject_code, course_number))
     cursor.callproc("procGetCourseSectionsForSpecifiedCourse", (subject_code, course_number))
-    rows = cursor.fetchall()
+    
+    try:
+        rows = cursor.fetchall()
+    except pymssql.Error:
+        rows = []
+
     conn.close()
 
     #Convert rows to list of dictionaries

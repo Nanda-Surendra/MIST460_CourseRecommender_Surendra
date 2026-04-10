@@ -9,8 +9,7 @@ def get_course_prerequisites(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procGetCoursePrerequisites(?, ?)}", (subject_code, course_number))
     cursor.callproc("procGetCoursePrerequisites", (subject_code, course_number))
-    #cursor.nextset()
-
+    
     try:
         rows = cursor.fetchall()
     except pymssql.Error:

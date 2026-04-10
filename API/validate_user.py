@@ -1,3 +1,5 @@
+import pymssql
+
 from get_db_connection import get_db_connection
 
 def validate_user(
@@ -8,7 +10,12 @@ def validate_user(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procValidateUser(?, ?)}", (username, password))
     cursor.callproc("procValidateUser", (username, password))
-    rows = cursor.fetchall()
+
+    try:
+        rows = cursor.fetchall()
+    except pymssql.Error:
+        rows = []
+
     conn.close()
 
     #Convert rows to list of dictionaries

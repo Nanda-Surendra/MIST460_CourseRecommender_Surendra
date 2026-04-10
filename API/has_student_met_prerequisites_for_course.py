@@ -14,7 +14,7 @@ def has_student_met_prerequisites_for_course(
 
     try:
         rows = cursor.fetchall()
-    except pymssql.OperationalError:
+    except pymssql.Error:
         rows = []
     
     conn.close()

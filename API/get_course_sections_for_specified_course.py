@@ -8,7 +8,7 @@ def get_course_sections_for_specified_course(
 ):
     conn = get_db_connection()
     #1
-    cursor = conn.cursor(as_dict=True)
+    cursor = conn.cursor(as_dict=True)#explicitly request dictionary results so we can use column names instead of indices
     
     #2 (two options)
     #cursor.execute("{CALL procGetCourseSectionsForSpecifiedCourse(?, ?)}", (subject_code, course_number))    
@@ -38,20 +38,5 @@ def get_course_sections_for_specified_course(
         }
         for row in rows
     ]
-
-    #Alternative to #4
-    results = [
-        {
-            "SubjectCode": row[0],
-            "CourseNumber": row[1],
-            "SectionNumber": row[2],
-            "SectionSemester": row[3],
-            "SectionYear": row[4],
-            "RemainingOpenings": row[5],
-            "InstructorName": row[6]
-        }
-        for row in rows
-    ]
-
 
     return {"data": results}

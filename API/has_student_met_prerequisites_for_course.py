@@ -10,7 +10,7 @@ def has_student_met_prerequisites_for_course(
     cursor = conn.cursor(as_dict=True)
     #cursor.execute("{CALL procHasStudentMetPrerequisitesForCourse(?, ?, ?)}", (student_id, subject_code, course_number))
     cursor.callproc("procHasStudentMetPrerequisitesForCourse", (student_id, subject_code, course_number))
-    #cursor.nextset()
+
 
     try:
         rows = cursor.fetchall()

@@ -28,6 +28,31 @@ IF OBJECT_ID('procHasStudentMetPrerequisitesForCourse') is NOT NULL
     DROP PROCEDURE procHasStudentMetPrerequisitesForCourse;
 
 
+GO
+
+create or alter procedure procGetAllCourses
+AS
+BEGIN
+    SELECT CourseID, CourseDescription
+    FROM Course;
+END;
+-- EXEC procGetAllCourses;
+
+
+GO
+
+create or alter procedure procInsertChunk
+(
+    @CourseChunk NVARCHAR(MAX),
+    @ChunkEmbedding VECTOR(1536),
+    @CourseID INT
+)
+AS
+BEGIN
+    INSERT INTO Chunks (CourseChunk, ChunkEmbedding, CourseID)
+    VALUES (@CourseChunk, @ChunkEmbedding, @CourseID);
+END;
+
 -- Need days / times for sections, Location
 
 GO

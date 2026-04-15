@@ -6,20 +6,22 @@ IF OBJECT_ID('RegistrationSection') IS NOT NULL DROP TABLE RegistrationSection;
 IF OBJECT_ID('Registration') IS NOT NULL DROP TABLE Registration;
 IF OBJECT_ID('Section') IS NOT NULL DROP TABLE Section;
 IF OBJECT_ID('Instructor') IS NOT NULL DROP TABLE Instructor;
-if OBJECT_ID('CoursePrerequisite') IS NOT NULL DROP TABLE CoursePrerequisite;
+If OBJECT_ID('CoursePrerequisite') IS NOT NULL DROP TABLE CoursePrerequisite;
+IF OBJECT_ID('Chunks')        IS NOT NULL DROP TABLE Chunks;
 IF OBJECT_ID('Course')         IS NOT NULL DROP TABLE Course;
 IF OBJECT_ID('Major')         IS NOT NULL DROP TABLE Major;
 IF OBJECT_ID('Alum')           IS NOT NULL DROP TABLE Alum;
 IF OBJECT_ID('Advisor')     IS NOT NULL DROP TABLE Advisor;
 IF OBJECT_ID('Student')        IS NOT NULL DROP TABLE Student;
 IF OBJECT_ID('AppUser')        IS NOT NULL DROP TABLE AppUser;
+IF OBJECT_ID('Job')           IS NOT NULL DROP TABLE Job;
 
 -- create CoursePrerequisite table
 -- create Registration
 -- create RegistrationSection
 
-
 GO
+
 
 CREATE TABLE AppUser (
     AppUserID       INT IDENTITY(1,1) 
@@ -76,6 +78,14 @@ CREATE TABLE Alum (
 );
 GO
 
+CREATE TABLE Job (
+    JobID           INT IDENTITY(1,1) CONSTRAINT PK_Job PRIMARY KEY,
+    JobTitle  NVARCHAR(MAX) NOT NULL,
+    Industry        NVARCHAR(100) NULL,
+	JobDescription NVARCHAR(MAX) NULL
+);
+
+GO
 
 CREATE TABLE Major (
     MajorID     INT IDENTITY(1,1) CONSTRAINT PK_Major PRIMARY KEY,
@@ -96,6 +106,16 @@ CREATE TABLE Course (
 );
 GO
 
+CREATE TABLE Chunks (
+    ChunkID INT IDENTITY(1,1) CONSTRAINT PK_Chunks PRIMARY KEY,
+    CourseChunk NVARCHAR(MAX) NOT NULL,
+    ChunkEmbedding VECTOR(1536) NOT NULL,
+    CourseID INT NOT NULL
+        CONSTRAINT FK_Chunks_Course FOREIGN KEY (CourseID) REFERENCES Course(CourseID)
+);
+
+
+GO
 
 create table Instructor (
     InstructorID int identity(1,1) not null,

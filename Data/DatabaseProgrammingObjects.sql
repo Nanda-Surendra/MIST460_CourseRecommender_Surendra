@@ -53,6 +53,8 @@ BEGIN
     VALUES (@CourseChunk, @ChunkEmbedding, @CourseID);
 END;
 
+-- select * from Chunks;
+
 -- Need days / times for sections, Location
 
 GO

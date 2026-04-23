@@ -28,6 +28,68 @@ IF OBJECT_ID('procHasStudentMetPrerequisitesForCourse') is NOT NULL
     DROP PROCEDURE procHasStudentMetPrerequisitesForCourse;
 
 
+go
+
+create or alter procedure procGetCourseRecommendationsForJobDescription
+(
+    @JobDescription vector(1536),
+    @Semester nvarchar(20) = null,
+    @Year int = null
+)
+as
+begin
+    select C.CourseID, Evidence, Distance, Title, SubjectCode, CourseNumber, CourseDescription, SectionID, 
+    SectionSemester, SectionYear, RemainingOpenings
+    from dbo.fnGetCourseRecommendationsForSelectedJob(@JobDescription) as F
+    join Course C on F.CourseID = C.CourseID
+    join Section S on C.CourseID = S.CourseID
+    where (@Semester is null or S.SectionSemester = @Semester)
+    and (@Year is null or S.SectionYear = @Year)
+end;
+
+go
+
+
+create or alter function fnGetCourseRecommendationsForSelectedJob
+(
+    @JobDescriptionEmbedding VECTOR(1536)
+)
+returns @RecommendedCourses table
+(
+    CourseID int,
+    Evidence nvarchar(max),
+    Distance float
+)
+as
+begin
+    insert into @RecommendedCourses (CourseID, Evidence, Distance)
+    select top 5 
+        CourseID, 
+        MIN(CourseChunk) as Evidence,
+        MIN(VECTOR_DISTANCE('cosine', ChunkEmbedding, @JobDescriptionEmbedding)) AS Distance -- smaller distance means more similar
+    from Chunks
+    Group by CourseID
+    order by Distance asc; -- order by most similar (smallest distance) to least similar
+
+    return;
+end;
+
+/*
+declare @embedding vector(1536);
+set @embedding = (select top 1 ChunkEmbedding from Chunks);
+SELECT * FROM dbo.fnGetCourseRecommendationsForSelectedJob(@embedding);
+*/
+
+go
+
+create or alter procedure procGetAllJobs
+As
+BEGIN
+    SELECT JobTitle, JobDescription
+    FROM Job;
+END;
+-- exec procGetAllJobs;
+
 GO
 
 create or alter procedure procGetAllCourses
@@ -385,3 +447,9 @@ from AppUser
 
 --- Logic for enrolling a student in a course section (Input -> Creating / Inserting; Updating -> Delete / Insert)
 -- Write down the steps you would take to enroll a student in a course section, including any checks you would perform
+
+go
+
+declare @embedding vector(1536);
+set @embedding = (select top 1 ChunkEmbedding from Chunks);
+SELECT * FROM dbo.fnGetCourseRecommendationsForSelectedJob(@embedding);

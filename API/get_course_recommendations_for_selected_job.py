@@ -5,6 +5,11 @@ import json
 import pprint
 import os
 
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from format_context import format_context
+
+
 def get_course_recommendations_for_selected_job(job_description: str) -> str:
 
     #openai_key = os.getenv("OPENAI_API_KEY")
@@ -26,4 +31,82 @@ def get_course_recommendations_for_selected_job(job_description: str) -> str:
     semantically_similar_courses = cursor.fetchall()
 
     #The second openAI model is a generative model.
-    generative_model = OpenAIEmbeddings(model="gpt-4o-mini", temperature=0)
+    #generative_model = OpenAIEmbeddings(model="gpt-4o-mini", temperature=0)
+
+    #-----------------------------------------------------------------------
+
+    generative_model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
+
+    # Create embedding for the job description to run semantic search
+    query_embedding = embedding_model.embed_query(job_description)
+
+    print("\nUser Query Embedding:")
+    pprint.pprint(query_embedding)
+
+    connection = get_db_connection()
+    cursor = connection.cursor(as_dict=True)
+
+    cursor.execute(
+        "EXEC procGetCourseRecommendationsForSelectedJob %s, %s, %s",
+        (json.dumps(query_embedding), semester_name, year_value)
+    )
+       
+    rows = cursor.fetchall()
+    course_count = len(rows)
+
+    semantic_results_for_context = format_context(rows)
+
+    cursor.close()
+    connection.close()
+
+    pprint.pprint(semantic_results_for_context)
+
+    prompt = ChatPromptTemplate.from_messages([
+        (
+            "system",
+            """
+            You are an expert academic advisor helping students identify courses 
+            that align with a target job description.
+
+            You will be given:
+            - A user query describing a job or career goal
+            - A set of retrieved course records, each with a title, description, 
+            and a cosine distance score (lower = better match)
+
+            Your task:
+            1. For each retrieved course, assess whether it genuinely prepares a 
+            student for the stated job role based solely on the course description.
+            2. If a course is a strong match, explain specifically which skills or 
+            topics in the description align with the job requirements.
+            3. Be honest about weak matches rather than forcing a justification.
+            4. Rank the courses from most to least relevant in your response.
+            5. Do not invent course content, prerequisites, or outcomes not stated 
+            in the provided descriptions.
+            6. If none of the retrieved courses are a good fit, say so clearly and 
+            suggest the student speak with an advisor directly.
+            """
+        ),
+        (
+            "human",
+            """
+            User Query:
+            {user_query}
+
+            Retrieved Courses ({course_count} results, ranked by relevance):
+            {context}
+
+            Please provide your course recommendations, ranked from best to worst fit.
+            Cite the match score and specific evidence from each description to justify 
+            your reasoning. Flag any course with a distance score above 0.4 as a weak match.
+            """
+        ),
+    ])
+
+    chain = prompt | generative_model
+    response = chain.invoke({
+    "user_query": user_query,
+    "context":    semantic_results_for_context,
+    "course_count": course_count
+    })
+    
+    return response.content

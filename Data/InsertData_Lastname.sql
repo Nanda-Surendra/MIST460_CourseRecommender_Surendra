@@ -379,6 +379,64 @@ VALUES
 
 GO
 
+INSERT INTO Section (CourseID, InstructorID, CRN, SectionSemester, SectionYear, SectionNumber, RemainingOpenings, SectionAverageRating)
+VALUES
+-- CourseID 10
+(10, 1, '10101', 'Spring', 2026, '001', 12, 4.20),
+
+-- CourseID 11
+(11, 2, '10102', 'Spring', 2026, '001', 8,  3.95),
+
+-- CourseID 28
+(28, 3, '10103', 'Spring', 2026, '001', 15, 4.50),
+
+-- CourseID 29
+(29, 4, '10104', 'Spring', 2026, '001', 5,  4.10),
+
+-- CourseID 30
+(30, 5, '10105', 'Spring', 2026, '001', 20, 3.75),
+
+-- CourseID 40
+(40, 1, '10106', 'Spring', 2026, '001', 10, 4.35),
+
+-- CourseID 31
+(31, 2, '10107', 'Spring', 2026, '001', 7,  4.00),
+
+-- CourseID 32
+(32, 3, '10108', 'Spring', 2026, '001', 18, 4.60),
+
+-- CourseID 35
+(35, 4, '10109', 'Spring', 2026, '001', 3,  3.85),
+
+-- CourseID 36
+(36, 5, '10110', 'Spring', 2026, '001', 14, 4.25),
+
+-- CourseID 37
+(37, 1, '10111', 'Spring', 2026, '001', 9,  4.45),
+
+-- CourseID 25
+(25, 2, '10112', 'Spring', 2026, '001', 11, 3.90),
+
+-- CourseID 26
+(26, 3, '10113', 'Spring', 2026, '001', 6,  4.15),
+
+-- CourseID 38
+(38, 4, '10114', 'Spring', 2026, '001', 16, 4.55),
+
+-- CourseID 39
+(39, 5, '10115', 'Spring', 2026, '001', 4,  3.70),
+
+-- CourseID 27
+(27, 1, '10116', 'Spring', 2026, '001', 13, 4.30),
+
+-- CourseID 33
+(33, 2, '10117', 'Spring', 2026, '001', 22, 4.05),
+
+-- CourseID 34
+(34, 3, '10118', 'Spring', 2026, '001', 17, 4.40);
+
+go
+
 -- select * from Section;
 
 -- select * from Course;

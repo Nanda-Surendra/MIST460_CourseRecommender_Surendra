@@ -30,7 +30,7 @@ IF OBJECT_ID('procHasStudentMetPrerequisitesForCourse') is NOT NULL
 
 go
 
-create or alter procedure procGetCourseRecommendationsForJobDescription
+create or alter procedure procGetCourseRecommendationsForSelectedJob
 (
     @JobDescription vector(1536),
     @Semester nvarchar(20) = null,
@@ -39,12 +39,13 @@ create or alter procedure procGetCourseRecommendationsForJobDescription
 as
 begin
     select C.CourseID, Evidence, Distance, Title, SubjectCode, CourseNumber, CourseDescription, SectionID, 
-    SectionSemester, SectionYear, RemainingOpenings
+    SectionSemester, SectionYear, RemainingOpenings, CRN, SectionNumber
     from dbo.fnGetCourseRecommendationsForSelectedJob(@JobDescription) as F
     join Course C on F.CourseID = C.CourseID
     join Section S on C.CourseID = S.CourseID
     where (@Semester is null or S.SectionSemester = @Semester)
     and (@Year is null or S.SectionYear = @Year)
+    order by Distance asc;
 end;
 
 go
@@ -69,6 +70,7 @@ begin
         MIN(VECTOR_DISTANCE('cosine', ChunkEmbedding, @JobDescriptionEmbedding)) AS Distance -- smaller distance means more similar
     from Chunks
     Group by CourseID
+    Having MIN(VECTOR_DISTANCE('cosine', ChunkEmbedding, @JobDescriptionEmbedding)) <= 0.6
     order by Distance asc; -- order by most similar (smallest distance) to least similar
 
     return;
@@ -449,7 +451,8 @@ from AppUser
 -- Write down the steps you would take to enroll a student in a course section, including any checks you would perform
 
 go
-
+/*
 declare @embedding vector(1536);
 set @embedding = (select top 1 ChunkEmbedding from Chunks);
 SELECT * FROM dbo.fnGetCourseRecommendationsForSelectedJob(@embedding);
+*/

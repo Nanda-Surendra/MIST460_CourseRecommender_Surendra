@@ -20,6 +20,7 @@ def get_course_recommendations_for_selected_job(job_description: str) -> str:
     #Use the openAI embeddings model to create an embedding for the job description
     embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
 
+    # Create embedding for the job description to run semantic search
     job_description_embedding = embedding_model.embed_query(job_description)
 
     conn = get_db_connection()
@@ -29,6 +30,8 @@ def get_course_recommendations_for_selected_job(job_description: str) -> str:
                    (json.dumps(job_description_embedding), semester_value, year_value))
     
     semantically_similar_courses = cursor.fetchall()
+    course_count = len(semantically_similar_courses)
+
 
     #The second openAI model is a generative model.
     #generative_model = OpenAIEmbeddings(model="gpt-4o-mini", temperature=0)
@@ -38,26 +41,26 @@ def get_course_recommendations_for_selected_job(job_description: str) -> str:
     generative_model = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     # Create embedding for the job description to run semantic search
-    query_embedding = embedding_model.embed_query(job_description)
+    #query_embedding = embedding_model.embed_query(job_description)
 
     print("\nUser Query Embedding:")
-    pprint.pprint(query_embedding)
+    pprint.pprint(job_description_embedding)
 
-    connection = get_db_connection()
-    cursor = connection.cursor(as_dict=True)
 
-    cursor.execute(
-        "EXEC procGetCourseRecommendationsForSelectedJob %s, %s, %s",
-        (json.dumps(query_embedding), semester_value, year_value)
-    )
+    #connection = get_db_connection()
+    #cursor = connection.cursor(as_dict=True)
+
+    # cursor.execute(
+    #     "EXEC procGetCourseRecommendationsForSelectedJob %s, %s, %s",
+    #     (json.dumps(query_embedding), semester_value, year_value)
+    # )
        
-    rows = cursor.fetchall()
-    course_count = len(rows)
+    #rows = cursor.fetchall()
 
-    semantic_results_for_context = format_context(rows)
+    semantic_results_for_context = format_context(semantically_similar_courses)
 
     cursor.close()
-    connection.close()
+    conn.close()
 
     pprint.pprint(semantic_results_for_context)
 

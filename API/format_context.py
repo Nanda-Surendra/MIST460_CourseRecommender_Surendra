@@ -1,12 +1,12 @@
-def format_context(rows):
+def format_context(semantically_similar_courses):
     formatted = []
-    for row in rows:
+    for each_similar_course in semantically_similar_courses:
         formatted.append(
-            f"Course: {row['SubjectCode']} {row['CourseNumber']} — {row['Title']}\n"
-            f"Section: {row['SectionSemester']} {row['SectionYear']} "
-            f"(SectionID {row['SectionID']})\n"
-            f"Match score (cosine distance): {float(row['Distance']):.3f}  "
+            f"Course: {each_similar_course['SubjectCode']} {each_similar_course['CourseNumber']} — {each_similar_course['Title']}\n"
+            f"Section: {each_similar_course['SectionSemester']} {each_similar_course['SectionYear']} "
+            f"(SectionID {each_similar_course['SectionID']})\n"
+            f"Match score (cosine distance): {float(each_similar_course['Distance']):.3f}  "
             f"[lower = better, flag if above 0.4]\n"
-            f"Description: {row['CourseDescription']}"
+            f"Description: {each_similar_course['CourseDescription']}"
         )
     return "\n\n---\n\n".join(formatted)

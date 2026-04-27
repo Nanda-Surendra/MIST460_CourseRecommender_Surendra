@@ -48,7 +48,7 @@ def get_course_recommendations_for_selected_job(job_description: str) -> str:
 
     cursor.execute(
         "EXEC procGetCourseRecommendationsForSelectedJob %s, %s, %s",
-        (json.dumps(query_embedding), semester_name, year_value)
+        (json.dumps(query_embedding), semester_value, year_value)
     )
        
     rows = cursor.fetchall()
